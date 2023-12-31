@@ -1,0 +1,172 @@
+// Import necessary dependencies and components
+import React, { useState } from 'react';
+import {
+  AppBar,
+  Container,
+  CssBaseline,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Paper,
+  Select,
+  TextField,
+  Toolbar,
+  Typography,
+  Button,
+  Grid,
+} from '@material-ui/core';
+
+// Initial state for tasks
+const initialTasks = [
+  { id: 1, title: 'Task 1', description: 'Description 1', dueDate: '2023-01-01', status: 'To Do' },
+  { id: 2, title: 'Task 2', description: 'Description 2', dueDate: '2023-02-01', status: 'In Progress' },
+  { id: 3, title: 'Task 3', description: 'Description 3', dueDate: '2023-03-01', status: 'Completed' },
+];
+
+// Task Management Dashboard Component
+function TaskDashboard() {
+  // State for tasks
+  const [tasks, setTasks] = useState(initialTasks);
+
+  // State for form input
+  const [taskInput, setTaskInput] = useState({
+    title: '',
+    description: '',
+    dueDate: '',
+    status: 'To Do',
+  });
+
+  // Handle form input changes
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setTaskInput((prevInput) => ({ ...prevInput, [name]: value }));
+  };
+
+  // Handle form submission
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
+    // Create a new task with unique ID
+    const newTask = {
+      id: tasks.length + 1,
+      ...taskInput,
+    };
+    // Update tasks state
+    setTasks((prevTasks) => [...prevTasks, newTask]);
+    // Clear form input
+    setTaskInput({
+      title: '',
+      description: '',
+      dueDate: '',
+      status: 'To Do',
+    });
+  };
+
+  // Handle status update
+  const handleStatusUpdate = (taskId, newStatus) => {
+    setTasks((prevTasks) =>
+      prevTasks.map((task) =>
+        task.id === taskId ? { ...task, status: newStatus } : task
+      )
+    );
+  };
+
+  return (
+    <div>
+      <CssBaseline />
+      <AppBar position="static">
+        <Toolbar>
+          <Typography variant="h6">Task Management Dashboard</Typography>
+        </Toolbar>
+      </AppBar>
+      <Container maxWidth="lg" style={{ marginTop: '20px' }}>
+        <Paper elevation={3} style={{ padding: '20px' }}>
+          <Typography variant="h5" gutterBottom>
+            Add New Task
+          </Typography>
+          <form onSubmit={handleFormSubmit}>
+            <Grid container spacing={3}>
+              <Grid item xs={12} sm={4}>
+                <TextField
+                  label="Title"
+                  name="title"
+                  value={taskInput.title}
+                  onChange={handleInputChange}
+                  fullWidth
+                />
+              </Grid>
+              <Grid item xs={12} sm={4}>
+                <TextField
+                  label="Description"
+                  name="description"
+                  value={taskInput.description}
+                  onChange={handleInputChange}
+                  fullWidth
+                />
+              </Grid>
+              <Grid item xs={12} sm={4}>
+                <TextField
+                  label="Due Date"
+                  name="dueDate"
+                  type="date"
+                  value={taskInput.dueDate}
+                  onChange={handleInputChange}
+                  fullWidth
+                />
+              </Grid>
+              <Grid item xs={12} sm={4}>
+                <FormControl fullWidth>
+                  <InputLabel>Status</InputLabel>
+                  <Select
+                    name="status"
+                    value={taskInput.status}
+                    onChange={handleInputChange}
+                  >
+                    <MenuItem value="To Do">To Do</MenuItem>
+                    <MenuItem value="In Progress">In Progress</MenuItem>
+                    <MenuItem value="Completed">Completed</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} sm={4}>
+                <Button type="submit" variant="contained" color="primary">
+                  Add Task
+                </Button>
+              </Grid>
+            </Grid>
+          </form>
+        </Paper>
+
+        <Paper elevation={3} style={{ marginTop: '20px', padding: '20px' }}>
+          <Typography variant="h5" gutterBottom>
+            Task List
+          </Typography>
+          <Grid container spacing={3}>
+            {tasks.map((task) => (
+              <Grid item xs={12} sm={4} key={task.id}>
+                <Paper style={{ padding: '10px', marginBottom: '10px' }}>
+                  <Typography variant="subtitle1">{task.title}</Typography>
+                  <Typography variant="body2">{task.description}</Typography>
+                  <Typography variant="body2">Due Date: {task.dueDate}</Typography>
+                  <Typography variant="body2">Status: {task.status}</Typography>
+                  <FormControl fullWidth>
+                    <InputLabel>Status</InputLabel>
+                    <Select
+                      value={task.status}
+                      onChange={(e) => handleStatusUpdate(task.id, e.target.value)}
+                    >
+                      <MenuItem value="To Do">To Do</MenuItem>
+                      <MenuItem value="In Progress">In Progress</MenuItem>
+                      <MenuItem value="Completed">Completed</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Paper>
+              </Grid>
+            ))}
+          </Grid>
+        </Paper>
+      </Container>
+    </div>
+  );
+}
+
+export default TaskDashboard;
